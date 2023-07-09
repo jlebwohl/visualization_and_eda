@@ -30,7 +30,7 @@ weather_df =
     date_min = "2017-01-01",
     date_max = "2017-12-31") %>%
   mutate(
-    name = recode(
+     name = recode(
       id, 
       USW00094728 = "CentralPark_NY", 
       USC00519397 = "Waikiki_HA",
@@ -106,3 +106,52 @@ weather_df %>%
     ## Warning: Removed 15 rows containing missing values (`geom_point()`).
 
 ![](viz_ii_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+## Scales
+
+Start with the same plot; x and y scales
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = 0.5) + 
+  labs(
+  title = "Temperature plot",
+  x = "Minimum daily temperature (C)",
+  y = "Maximum daily temperature (C)",
+  caption = "Data from the rnoaa package; temperatures in 2017"
+) +
+  scale_x_continuous(
+    breaks = c(-15, 0 ,15),
+    labels = c("-15 C", "0", "15")
+  ) +
+  scale_y_continuous(
+    position = "right"
+  )
+```
+
+    ## Warning: Removed 15 rows containing missing values (`geom_point()`).
+
+![](viz_ii_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+Look at color scales.
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = 0.5) + 
+  labs(
+  title = "Temperature plot",
+  x = "Minimum daily temperature (C)",
+  y = "Maximum daily temperature (C)",
+  caption = "Data from the rnoaa package; temperatures in 2017"
+) +
+  viridis::scale_color_viridis(
+    name = "Location",
+    discrete = TRUE
+  ) 
+```
+
+    ## Warning: Removed 15 rows containing missing values (`geom_point()`).
+
+![](viz_ii_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
