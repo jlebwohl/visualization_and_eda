@@ -175,6 +175,42 @@ ggplot(data = waikiki, aes(x = date, y = tmax, color = name)) +
 
 ```
 
+## `patchwork`
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, fill = name)) +
+  geom_density(alpha = 0.5) + 
+  facet_grid(. ~ name)
+```
+
+What if you want multipanel plots but can't facet?
+
+```{r}
+tmax_tmin_plot = 
+  weather_df %>% 
+    ggplot(aes(x = tmin, y = tmax, color = name)) +
+    geom_point(alpha = 0.5) + 
+    theme(legend.position = "none")
+
+prcp_dens_plot = 
+  weather_df %>% 
+    filter(prcp > 0) %>% 
+    ggplot(aes(x = prcp, color = name)) +
+    geom_density(alpha = 0.5) +   
+    theme(legend.position = "none")
+
+
+tmax_date_plot = 
+  weather_df %>% 
+    ggplot(aes(x = date, y = tmax, color = name)) +
+    geom_point(alpha = 0.5) + 
+    geom_smooth(se = FALSE) +
+    theme(legend.position = "none")
+
+(tmax_tmin_plot + prcp_dens_plot) / tmax_date_plot
+
+```
 
 
 
