@@ -216,3 +216,6 @@ weather_df %>%
   scale_color_hue(h = c(0, 360))
 ```
 
+Summarize only gets you so far.
+
+

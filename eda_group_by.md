@@ -402,3 +402,5 @@ weather_df %>%
     ## Warning: Removed 9 rows containing missing values (`geom_point()`).
 
 <img src="eda_group_by_files/figure-gfm/unnamed-chunk-16-1.png" width="90%" />
+
+Summarize only gets you so far.
