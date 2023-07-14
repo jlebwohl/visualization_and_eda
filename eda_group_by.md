@@ -24,7 +24,7 @@ library(patchwork)
 knitr::opts_chunk$set(
   fig.width = 6,
   fig.asp = 0.6,
-  out.width.= "90%"
+  out.width = "90%"
 )
 
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
@@ -277,7 +277,7 @@ weather_df %>%
     ## `summarise()` has grouped output by 'name'. You can override using the
     ## `.groups` argument.
 
-![](eda_group_by_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+<img src="eda_group_by_files/figure-gfm/unnamed-chunk-10-1.png" width="90%" />
 
 Suppose you want to summarize many columns
 
@@ -338,3 +338,67 @@ weather_df %>%
 | 2017-10-01 |          21.79 |      30.29 |         8.31 |
 | 2017-11-01 |          12.29 |      28.38 |         1.38 |
 | 2017-12-01 |           4.47 |      26.46 |         2.21 |
+
+## `group_by` and `mutate`
+
+``` r
+weather_df %>% 
+  group_by(name) %>% 
+  mutate(
+    mean_tmax = mean(tmax, na.rm = TRUE),
+    centered_tmax = tmax - mean_tmax
+  ) %>%
+  ggplot(aes(x = date, y = centered_tmax, color = name)) +
+  geom_point()
+```
+
+    ## Warning: Removed 3 rows containing missing values (`geom_point()`).
+
+<img src="eda_group_by_files/figure-gfm/unnamed-chunk-13-1.png" width="90%" />
+
+Window functions
+
+``` r
+weather_df %>% 
+  group_by(name, month) %>% 
+  mutate(temp_rank = min_rank(desc(tmax))) %>% 
+  ggplot(aes(x = date, y = temp_rank, color = name)) + 
+  geom_point(alpha = .5)
+```
+
+    ## Warning: Removed 3 rows containing missing values (`geom_point()`).
+
+<img src="eda_group_by_files/figure-gfm/unnamed-chunk-14-1.png" width="90%" />
+
+Lag
+
+``` r
+weather_df %>% 
+  group_by(name) %>% 
+  mutate(temp_change = tmax - lag(tmax)) %>%
+  summarize(
+    temp_change_max = max(temp_change, na.rm = TRUE),
+    temp_change_sd = sd(temp_change, na.rm = TRUE)
+  )
+```
+
+    ## # A tibble: 3 × 3
+    ##   name           temp_change_max temp_change_sd
+    ##   <chr>                    <dbl>          <dbl>
+    ## 1 CentralPark_NY            12.7           4.45
+    ## 2 Waikiki_HA                 6.7           1.23
+    ## 3 Waterhole_WA               8             3.13
+
+``` r
+weather_df %>% 
+  transform(month = as.factor(month)) %>% 
+  group_by(name) %>% 
+  mutate(temp_change = tmax - lag(tmax)) %>%
+  ggplot(aes(x = date, y = temp_change, color = month)) + 
+  geom_point(alpha = 0.9) + 
+  scale_color_hue(h = c(0, 360))
+```
+
+    ## Warning: Removed 9 rows containing missing values (`geom_point()`).
+
+<img src="eda_group_by_files/figure-gfm/unnamed-chunk-16-1.png" width="90%" />
